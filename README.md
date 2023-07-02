@@ -29,4 +29,4 @@ A Simple wordle game implementation in Golang with gRPC server and CLI client
 
 ### Notes
 #### To generated stubs
-    protoc --go_out=./pbFiles --go_opt=paths=source_relative \ --go-grpc_out=./pbFiles --go-grpc_opt=paths=source_relative \ ./protos/wordle.proto
+    protoc --go_out=./pbFiles --go_opt=paths=source_relative --go-grpc_out=./pbFiles --go-grpc_opt=paths=source_relative ./protos/wordle.proto
