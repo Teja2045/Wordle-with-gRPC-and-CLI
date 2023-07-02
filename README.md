@@ -26,3 +26,9 @@ A Simple wordle game implementation in Golang with gRPC server and CLI client
 - Written Cron Jobs to update word, store and reset leader board daily
 - Implemented custom random function to get a random word out of 3000+ words based on date
 - Handled all cases in Wordle game
+
+### Notes
+#### To generated stubs
+    protoc --go_out=./pbFiles --go_opt=paths=source_relative \
+   --go-grpc_out=./pbFiles --go-grpc_opt=paths=source_relative \
+   ./protos/wordle.proto
