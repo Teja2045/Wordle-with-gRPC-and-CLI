@@ -1,0 +1,77 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+package main;
+
+
+option go_package = ".;pb";
+
+service GameService {
+    rpc Submit(WordGuess) returns (WordGuessResponse) {}
+    rpc Start(UserName) returns (StartResponse) {}
+    rpc GetGameStatus(UserName) returns (GameStatus) {}
+    rpc GetMyRank(UserName) returns (Rank) {}
+    rpc GetTodayRanks(EmptyMessage) returns (DayRanks) {}
+    rpc GetRanksHistory(EmptyMessage) returns (RanksHistory) {}
+}
+
+message EmptyMessage {
+
+}
+
+message WordGuess {
+    string userName = 1;
+    string word = 2;
+}
+
+message WordGuessResponse {
+   Status gameStatus = 1;
+   WordStatus wordMatch = 2;
+}
+
+message UserName {
+    string userName = 1;
+}
+
+message StartResponse {
+    string startResponse = 1;
+}
+
+message GameStatus {
+    Status gameStatus = 1;
+}
+
+message WordStatus {
+    CharacterStatus firstCharacter = 1;
+    CharacterStatus secondCharacter = 2;
+    CharacterStatus thirdCharacter = 3;
+    CharacterStatus fourthCharacter = 4;
+    CharacterStatus fifthCharacter = 5;
+}
+
+
+message RanksHistory {
+    repeated DayRanks allRanks = 1;
+}
+
+message DayRanks {
+    repeated Rank ranks = 1;
+}
+
+message Rank {
+    string UserName = 1;
+    google.protobuf.Timestamp time = 2;
+    int64 rank = 3;
+}
+
+enum CharacterStatus {
+    NOT_PRESENT = 0;
+    PRESENT_BUT_MISPLACED = 1;
+    CORRECT = 2;
+}
+
+enum Status {
+    NOT_ATTEMPTED = 0;
+    PENDING = 1;
+    WON = 2;
+    LOST = 3;
+}
