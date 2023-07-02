@@ -52,7 +52,6 @@ func (db *InMemoryDB) Start() error {
 		return err
 	}
 	// Todo : write logic to get data from a persistent database
-	// Todo : need to start a cron JOB
 	db.TODAY_WORD = db.WORDS.GetRandomWord()
 	log.Println("db is started...")
 	return nil
@@ -62,21 +61,17 @@ func (db *InMemoryDB) User(username string) error {
 	if db == nil {
 		return errors.Err_DB_EMPTY
 	}
-	log.Println("user1")
 	userGameStatusDB := db.UserGameStatus
 	userWordStatusDB := db.UserWordStatus
 	if userGameStatusDB[username] != nil {
 		return errors.Err_USER_ALREADY_EXIST
 	}
-	log.Println("user2")
 	db.UserGameStatusLock.Lock()
 	userGameStatusDB[username] = pb.Status_NOT_ATTEMPTED.Enum()
 	db.UserGameStatusLock.Unlock()
-	log.Println("user3")
 	db.UserWordStatusLock.Lock()
 	userWordStatusDB[username] = 0
 	db.UserWordStatusLock.Unlock()
-	log.Println("user4")
 	return nil
 }
 
@@ -187,7 +182,6 @@ func (db *InMemoryDB) StoreTodaysLeaderBoard() {
 	db.RanksHistory.AllRanks = append(db.RanksHistory.AllRanks, &pb.DayRanks{Ranks: db.TodaysRanks.Ranks})
 	db.RanksHistoryLock.Unlock()
 
-	log.Println("history: ", db.RanksHistory.AllRanks)
 	db.TodayRanksLock.Lock()
 	db.TodaysRanks.Ranks = []*pb.Rank{}
 	db.TodayRanksLock.Unlock()

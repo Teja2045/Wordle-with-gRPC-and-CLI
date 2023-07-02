@@ -23,9 +23,7 @@ func (c *Cron) Start() error {
 	// run everyday at midnight
 	cron.AddFunc("0 0 0 * * *", func() {
 		c.AssignWord()
-		log.Println("cron", c.myDB.RanksHistory.AllRanks)
 		c.myDB.StoreTodaysLeaderBoard()
-		log.Println("cronAfter", c.myDB.RanksHistory.AllRanks)
 	})
 
 	go cron.Start()
@@ -34,5 +32,4 @@ func (c *Cron) Start() error {
 
 func (c *Cron) AssignWord() {
 	c.myDB.TODAY_WORD = c.myDB.WORDS.GetRandomWord()
-	log.Println("New word added", c.myDB.TODAY_WORD)
 }
