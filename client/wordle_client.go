@@ -26,9 +26,11 @@ func main() {
 	}
 
 	startCmd := &cobra.Command{
-		Use:   "start-game",
-		Short: "| USER_NAME |",
-		Long:  "command to add your name before starting the game",
+		Use:     "start-game",
+		Short:   "| USER_NAME |",
+		Long:    "command to add your name before starting the game",
+		Example: "client start-game teja",
+		Args:    cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			userName := &pb.UserName{
 				UserName: args[0],
@@ -42,10 +44,15 @@ func main() {
 	}
 
 	submitCmd := &cobra.Command{
-		Use:   "submit-word",
-		Short: "| USERNAME | WORD |",
-		Long:  "command to submit the word you guessed",
+		Use:     "submit-word",
+		Short:   "| USERNAME | WORD |",
+		Long:    "command to submit the word you guessed",
+		Args:    cobra.ExactArgs(2),
+		Example: "client submit-word teja silly",
 		Run: func(cmd *cobra.Command, args []string) {
+			if len(args[1]) != 5 {
+				log.Panic("the word should have 5 letters")
+			}
 			wordGuess := &pb.WordGuess{
 				UserName: args[0],
 				Word:     args[1],
@@ -53,68 +60,67 @@ func main() {
 
 			wordResponse, err := client.Submit(context.Background(), wordGuess)
 			if err != nil {
-				log.Println("Error after submitting the word:", err.Error())
+				log.Panic("Error after submitting the word:", err.Error())
 			}
 			log.Println(wordResponse)
 		},
 	}
 
 	getGameStatusCmd := &cobra.Command{
-		Use:   "game-status",
-		Short: "|USERNAME|",
-		Long:  "command to view your game status",
+		Use:     "game-status",
+		Short:   "|USERNAME|",
+		Long:    "command to view your game status",
+		Args:    cobra.ExactArgs(1),
+		Example: "client game-status teja",
 		Run: func(cmd *cobra.Command, args []string) {
 			userName := &pb.UserName{
 				UserName: args[0],
 			}
 			wordResponse, err := client.GetGameStatus(context.Background(), userName)
 			if err != nil {
-				log.Println("Error while getting game status: ", err.Error())
+				log.Panic("Error while getting game status: ", err.Error())
 			}
 			log.Println(wordResponse)
 		},
 	}
 
 	getMyRankCmd := &cobra.Command{
-		Use:   "my-rank",
-		Short: "| USERNAME |",
-		Long:  "command to get your rank for today's game",
+		Use:     "my-rank",
+		Short:   "| USERNAME |",
+		Long:    "command to get your rank for today's game",
+		Example: "client my-rank teja",
+		Args:    cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			userName := &pb.UserName{
 				UserName: args[0],
 			}
 			myRank, err := client.GetMyRank(context.Background(), userName)
 			if err != nil {
-				log.Println("Error while getting your rank: ", err.Error())
+				log.Panic("Error while getting your rank: ", err.Error())
 			}
 			log.Println(myRank)
 		},
 	}
 
 	getTodayLeaderBoardCmd := &cobra.Command{
-		Use:   "today-leader-board",
-		Short: "<No Input>",
-		Long:  "Command to get today's leader board",
+		Use:     "today-leader-board",
+		Short:   "<No Input>",
+		Long:    "Command to get today's leader board",
+		Example: "client today-leader-board",
 		Run: func(cmd *cobra.Command, args []string) {
 			todayRanks, err := client.GetTodayRanks(context.Background(), &pb.EmptyMessage{})
 			if err != nil {
 				if err == errors.Err_RANKS_NO_ONE {
 					log.Println("________________TODAY-LEADER-BOARD__________________")
-					log.Println()
-					log.Println()
 					log.Println("-NO RANKS-")
 				} else {
-					log.Println("Error while getting today's leader board: ", err.Error())
+					log.Panic("Error while getting today's leader board: ", err.Error())
 				}
 			} else {
 				log.Println("________________TODAY-LEADER-BOARD___________________")
 				log.Println()
-				log.Println()
 				for _, rank := range todayRanks.Ranks {
-					log.Printf("%5d \t", rank.Rank)
-					log.Printf("%15s \t", rank.UserName)
-					log.Printf("%5s \t", rank.Time.AsTime().Location())
-					log.Println()
+					log.Printf("Rank:%d\t Name:%s\t %s", rank.Rank, rank.UserName, rank.Time.AsTime().Local())
 				}
 				log.Println()
 			}
@@ -122,17 +128,34 @@ func main() {
 	}
 
 	getLeaderBoardCmd := &cobra.Command{
-		Use:   "leader-board",
-		Short: "<No input>",
-		Long:  "Command to all time Leader board",
+		Use:     "leader-board",
+		Short:   "<No input>",
+		Long:    "Command to all time Leader board",
+		Example: "client leader-board",
 		Run: func(cmd *cobra.Command, args []string) {
 			leaderBoard, err := client.GetRanksHistory(context.Background(), &pb.EmptyMessage{})
 			if err != nil {
-				log.Println("Error while getting all time leader board: ", err.Error())
+				log.Panic("Error while getting all time leader board: ", err.Error())
 			}
 			log.Println("________________LEADER-BOARD__________________")
 			log.Println()
-			log.Println(leaderBoard.AllRanks)
+			if len(leaderBoard.AllRanks) == 0 {
+				log.Println("-NO RANKS-")
+			} else {
+				for _, dayRank := range leaderBoard.AllRanks {
+					if len(dayRank.Ranks) == 0 {
+						continue
+					}
+					day := dayRank.Ranks[0].Time.AsTime().Local().Day()
+					month := dayRank.Ranks[0].Time.AsTime().Local().Month()
+					year := dayRank.Ranks[0].Time.AsTime().Local().Year()
+					log.Printf("DATE: %d-%d-%d", day, month, year)
+					for _, rank := range dayRank.Ranks {
+						log.Printf("Rank:%d\t Name:%s\t Time:%s", rank.Rank, rank.UserName, rank.Time.AsTime().Local())
+					}
+					log.Println()
+				}
+			}
 		},
 	}
 
