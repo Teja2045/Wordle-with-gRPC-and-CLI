@@ -28,5 +28,16 @@ A Simple wordle game implementation in Golang with gRPC server and CLI client
 - Handled all cases in Wordle game
 
 ### Notes
+#### To Change root Command
+- change the name of client file (client -> wordle)
+- delete client (old binary) from home/go/bin
+- run these commands
+    go build
+
+    go install
+
+    export PATH=$PATH:$GOPATH/bin
+
+
 #### To generated stubs
     protoc --go_out=./pbFiles --go_opt=paths=source_relative --go-grpc_out=./pbFiles --go-grpc_opt=paths=source_relative ./protos/wordle.proto
