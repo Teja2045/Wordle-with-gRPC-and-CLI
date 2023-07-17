@@ -32,11 +32,9 @@ A Simple wordle game implementation in Golang with gRPC server and CLI client
 - change the name of client file (client -> wordle)
 - delete client (old binary) from home/go/bin
 - run these commands
-    go build
-
-    go install
-
-    export PATH=$PATH:$GOPATH/bin
+          go build
+          go install
+          export PATH=$PATH:$GOPATH/bin
 
 
 #### To generated stubs
