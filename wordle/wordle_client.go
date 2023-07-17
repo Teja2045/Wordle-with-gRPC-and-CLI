@@ -20,7 +20,7 @@ func main() {
 	client := pb.NewGameServiceClient(conn)
 
 	rootCmd := &cobra.Command{
-		Use:   "client",
+		Use:   "wordle",
 		Short: "root command for the game",
 		Long:  `root command for the game`,
 	}
@@ -29,7 +29,7 @@ func main() {
 		Use:     "start-game",
 		Short:   "| USER_NAME |",
 		Long:    "command to add your name before starting the game",
-		Example: "client start-game teja",
+		Example: "wordle start-game teja",
 		Args:    cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			userName := &pb.UserName{
@@ -48,7 +48,7 @@ func main() {
 		Short:   "| USERNAME | WORD |",
 		Long:    "command to submit the word you guessed",
 		Args:    cobra.ExactArgs(2),
-		Example: "client submit-word teja silly",
+		Example: "wordle submit-word teja silly",
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args[1]) != 5 {
 				log.Panic("the word should have 5 letters")
@@ -68,10 +68,10 @@ func main() {
 
 	getGameStatusCmd := &cobra.Command{
 		Use:     "game-status",
-		Short:   "|USERNAME|",
+		Short:   " |USERNAME |",
 		Long:    "command to view your game status",
 		Args:    cobra.ExactArgs(1),
-		Example: "client game-status teja",
+		Example: "wordle game-status teja",
 		Run: func(cmd *cobra.Command, args []string) {
 			userName := &pb.UserName{
 				UserName: args[0],
@@ -88,7 +88,7 @@ func main() {
 		Use:     "my-rank",
 		Short:   "| USERNAME |",
 		Long:    "command to get your rank for today's game",
-		Example: "client my-rank teja",
+		Example: "wordle my-rank teja",
 		Args:    cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			userName := &pb.UserName{
@@ -106,7 +106,7 @@ func main() {
 		Use:     "today-leader-board",
 		Short:   "<No Input>",
 		Long:    "Command to get today's leader board",
-		Example: "client today-leader-board",
+		Example: "wordle today-leader-board",
 		Run: func(cmd *cobra.Command, args []string) {
 			todayRanks, err := client.GetTodayRanks(context.Background(), &pb.EmptyMessage{})
 			if err != nil {
@@ -131,7 +131,7 @@ func main() {
 		Use:     "leader-board",
 		Short:   "<No input>",
 		Long:    "Command to all time Leader board",
-		Example: "client leader-board",
+		Example: "wordle leader-board",
 		Run: func(cmd *cobra.Command, args []string) {
 			leaderBoard, err := client.GetRanksHistory(context.Background(), &pb.EmptyMessage{})
 			if err != nil {
